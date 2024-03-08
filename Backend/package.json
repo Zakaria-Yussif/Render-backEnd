@@ -5,11 +5,9 @@
   "main": "Server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-<<<<<<< HEAD:Backend/package.json
+
     "start": "node dist/server.js",
-=======
      "start":"nodemon Server.js"
->>>>>>> c7958eff93bbb9b9ec8cb286c05459699df0008e:src/package.json
     "build": "npm install"
   },
   "keywords": [],
