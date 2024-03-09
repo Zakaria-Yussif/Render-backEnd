@@ -37,9 +37,9 @@ const WebSocket = require('ws');
 
 
 const app = express()
-let port = 9000;
+// let port = 9000;
 let port1=8700;
-let port2= 9700;
+// let port2= 9700;
 
 app.use(express.json())
 app.use(express.static("public"))
@@ -70,7 +70,7 @@ const io = new Server(server, {
 });
 
 
-app.use('/', signupRouter);
+app.use('/api/signUp', signupRouter);
 app.use('/api/login', loginRouter);
 app.use("/", adminRouter)
 app.use("/", employeeRouter);
@@ -79,13 +79,6 @@ app.use("/", picturesRouter);
 app.use("/", taskRouter);
 
 
-
-
-
-// app.get('/',  authenticateToken ,async (req, res) => {
-    
-//     res.send('Movie Date created')
-//   })
 
 handleSocketIO(io);
 
@@ -115,7 +108,7 @@ server.listen(port1, () => {
   });
 
   app.listen(port, () => {
-    console.log(`Server is running and accessible from other devices on the same network at http://YOUR_LOCAL_IP:${port}`);
-    console.log('Server is listening to port ' + port2)
+    console.log(`Server is running and accessible${port}`);
+    
   });
 
