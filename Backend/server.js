@@ -89,9 +89,13 @@ app.use("/", taskRouter);
 
 handleSocketIO(io);
 
+app.get("/", (req, res) => {
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.send("Server is Running.....");
+});
+
 
           
-
 
 
 
