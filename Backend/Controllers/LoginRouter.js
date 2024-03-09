@@ -11,7 +11,7 @@ const saltRounds = 10;
 
 
 // Define the route handler using the router object
-router.post('/login', async (req, res) => {
+router.post('/', async (req, res) => {
     const { password, email } = req.body;
     try {
         const user = await SignUp.findOne({ email });
