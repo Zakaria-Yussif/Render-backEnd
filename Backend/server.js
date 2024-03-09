@@ -94,6 +94,10 @@ app.get("/", (req, res) => {
   res.send("Server is Running.....");
 });
 
+app.get("/test", (req, res) => {
+ 
+  res.send("Server is Running.....");
+});
 
           
 
