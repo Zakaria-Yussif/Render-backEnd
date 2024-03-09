@@ -96,7 +96,7 @@ app.get("/", (req, res) => {
 
 app.get("/test", (req, res) => {
  
-  res.send("Server is Running.....");
+  res.send("Testing server....running");
 });
 
           
