@@ -71,7 +71,7 @@ const io = new Server(server, {
 
 
 app.use('/', signupRouter);
-app.use('/', loginRouter);
+app.use('/api/login', loginRouter);
 app.use("/", adminRouter)
 app.use("/", employeeRouter);
 app.use("/", passwordRouter);
