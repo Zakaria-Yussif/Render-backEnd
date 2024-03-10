@@ -3,7 +3,7 @@ const router = express.Router();
 const session = require('express-session');
 const EmployeeList = require("../Modules/employeeList")
  const ProfileImgs =require("../Modules/profilePicture")
-
+const connection = require("../connection")
 
 router.post('/uploadPicture', async (req, res) => {
     try {
