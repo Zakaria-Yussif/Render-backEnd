@@ -31,7 +31,7 @@ app.use(session({
 
 app.use('/api/signUp', signupRouter);
 app.use('/api/login', loginRouter);
-app.use('/', adminRouter);
+app.use('/api/admin', adminRouter);
 app.use('/', employeeRouter);
 app.use('/', passwordRouter);
 app.use('/api/uploadPicture', picturesRouter);
