@@ -14,7 +14,7 @@ const adminUser = [
     
   ];
   
-  router.post("/admin", (req, res) => {
+  router.post("/", (req, res) => {
     const { email } = req.body;
    console.log( "email",email)
     // Check if the user is an admin
