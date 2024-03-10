@@ -5,7 +5,7 @@ const EmployeeList = require("../Modules/employeeList")
  const ProfileImgs =require("../Modules/profilePicture")
 const connection = require("../connection")
 
-router.post('/uploadPicture', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
       const { profileImg, userId, name, Email } = req.body;
   
