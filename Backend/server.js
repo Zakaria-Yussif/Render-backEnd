@@ -34,7 +34,7 @@ app.use('/api/login', loginRouter);
 app.use('/', adminRouter);
 app.use('/', employeeRouter);
 app.use('/', passwordRouter);
-app.use('/api/profilePicture', picturesRouter);
+app.use('/api/uploadPicture', picturesRouter);
 app.use('/', taskRouter);
 
 const server = http.createServer(app);
