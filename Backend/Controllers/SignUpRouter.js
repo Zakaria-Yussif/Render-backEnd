@@ -7,7 +7,7 @@ const connection = require("../connection")
 const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
 // Route handler for user signup
-router.post('/signup', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
