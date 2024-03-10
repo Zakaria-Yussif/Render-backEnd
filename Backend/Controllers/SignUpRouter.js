@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 const SignUp = require('../Modules/signUp'); // Assuming you have a SignUp model
 const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
-router.post('/signup', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
