@@ -40,7 +40,7 @@ app.use('/', taskRouter);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://mern-stack-app22.onrender.com',
     methods: ['GET', 'POST']
   }
 });
