@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Import jwt module
-
+const connection = require("../connection")
 const SignUp = require('../Modules/signUp'); // Assuming you have a SignUp model
 require('dotenv').config();
 const saltRounds = 10;
