@@ -3,11 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const SignUp = require('../Modules/signUp'); // Assuming you have a SignUp model
-const connection = require("../connection")
 const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
-// Route handler for user signup
-router.post('/', async (req, res) => {
+router.post('/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
@@ -31,28 +29,50 @@ router.post('/', async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'your_email@gmail.com', // Your Gmail email
-                pass: 'your_password' // Your Gmail password
+                user: 'zakarias.yussif@gmail.com', // Your Gmail email
+                pass: 'quizcazzmqwwethj' // Your Gmail password
             }
         });
 
         const mailOptions = {
-            from: 'your_email@gmail.com',
+            from: 'zakarias.yussif@gmail.com',
             to: email,
-            subject: 'Welcome to Our App',
-            html: `<p>Thank you for signing up!</p>`
+            subject: 'Confirm Account',
+            html: `
+                <div style="margin: 20px; font-size: 20px;">
+                    <h1>ConnectTeam</h1>
+                    <h4>Hi ${name},</h4>
+                    <p>Welcome to ConnectTeam!</p>
+                    <p>You have been successfully created an Account.</p>
+                    <p>To complete the registration process and activate your account, please click the button below:</p>
+                    <a href="http://localhost:3000/confirm-account?email=${email}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Confirm Account</a>
+                    <p>If the button above does not work, you can also click <a href="http://localhost:3000/confirm-account?email=${email}">here</a>.</p>
+                    <p>By confirming your account, you will gain access to all the features and benefits of our platform/service.</p>
+                    <p>If you have any questions or encounter any issues, please don't hesitate to contact our support team at [Support Contact Information].</p>
+                    <p>Thank you for choosing ConnectTeam!</p>
+                    <a href="http://localhost:3000/login">Please login to your account for more details.</a>
+                    <img src="https://plus.unsplash.com/premium_photo-1661396653077-f0e36d12398e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjV8fGVtcGxveWVlJTIwdGFza3xlbnwwfHwwfHx8MA%3D%3D" style="display: block; margin-top: 20px; height: 150px; width: 420px;" />
+                    <p>Thank you for choosing ConnectTeam!</p>
+                    <div style="font-size: 15px; display: flex; flex-direction: row; margin-top: 20px;">
+                        <h5>Follow ConnectTeam:</h5>
+                        <img src="https://1.bp.blogspot.com/-S8HTBQqmfcs/XN0ACIRD9PI/AAAAAAAAAlo/FLhccuLdMfIFLhocRjWqsr9cVGdTN_8sgCPcBGAYYCw/s1600/f_logo_RGB-Blue_1024.png" alt="Facebook" style="margin-right: 10px; width: 30px; height: 30px;" />
+                        <img src="http://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" style="margin-right: 10px; width: 30px; height: 30px;" />
+                        <img src="https://tse2.mm.bing.net/th?id=OIP.PXTov9TveYX3Upu592UOygHaHa&pid=Api&P=0&h=220" alt="Twitter" style="margin-right: 10px; width: 30px; height: 30px;" />
+                    </div>
+                    <b style="color: grey; font-family: 'Crimson Pro', serif; opacity: 0.3;">@copyRight||ConnectBusiness.com</b>
+                </div>
+            `,
         };
 
-        transporter.sendMail(mailOptions, (error, info) => {
+        transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.error('Error sending email:', error);
+                res.status(500).json({ error: "Error sending email" });
             } else {
                 console.log('Email sent:', info.response);
+                res.status(200).json({ message: "Email sent successfully" });
             }
         });
-
-        // Respond with a success message
-        res.status(201).json({ message: "User signed up successfully" });
     } catch (error) {
         console.error("Error during user signup:", error);
         res.status(500).json({ error: "Server error, please try again later" });
