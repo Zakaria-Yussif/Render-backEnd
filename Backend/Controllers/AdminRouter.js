@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const session = require('express-session');
-
+const connection = require("../connection")
 router.use(session({
     secret: 'your-secret-key', // Change this to a strong, random string
     resave: false,
