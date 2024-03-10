@@ -6,7 +6,7 @@ const nodemailer = require('nodemailer');
 const SignUp = require('../Modules/signUp'); 
 const EmployeeList = require("../Modules/employeeList")
  const ProfileImgs = require("../Modules/profilePicture")
-
+const connection = require("../connection")
 
  const uploadFile = multer({  dest: 'uploads/',
  limits: { fileSize: 1024 * 1024 * 10 } // 10 MB limit
