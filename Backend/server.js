@@ -3,7 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const connection = require("./connection")
+const connection = require("./connection");
 const cors = require('cors');
 
 const signupRouter = require('./Controllers/SignUpRouter');
@@ -13,7 +13,6 @@ const employeeRouter = require('./Controllers/EmployeeRouter');
 const passwordRouter = require('./Controllers/PasswordRouter');
 const picturesRouter = require('./Controllers/PicturesRouter');
 const taskRouter = require('./Controllers/TaskRouter');
-const handleSocketIO = require('./Controllers/SocketRouter');
 
 const app = express();
 const port = 8700;
@@ -45,7 +44,62 @@ const io = socketIo(server, {
   }
 });
 
+const connectedUsers = {}; // Corrected typo from 'onst' to 'const'
+
+// Call handleSocketIO function to set up socket.io event handlers
 handleSocketIO(io);
+
+function handleSocketIO(io) {
+  io.on('connection', (socket) => {
+    console.log('a user connected', socket.id);
+
+    // Event handler for setting userId
+    socket.on('setUserId', (userId) => {
+      // Store the userId along with the socket connection
+      connectedUsers[userId] = socket.id;
+      console.log("User connected with userId:", userId);
+
+      socket.emit('connectedWithId', userId);
+    });
+
+    // Event handler for disconnection
+    socket.on('disconnect', () => {
+      for (const [key, value] of Object.entries(connectedUsers)) {
+        if (value === socket.id) {
+          delete connectedUsers[key];
+          console.log("User disconnected with userId:", key);
+          io.emit("callEnd"); // Inform all clients about the call ending
+          break;
+        }
+      }
+    });
+
+    // Event handler for sending messages
+    socket.on("send_message", (data) => {
+      socket.broadcast.emit("received_message", data);
+    });
+
+    // Event handler for callUser
+    socket.on("callUser", (data) => {
+      io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name });
+    });
+
+    // Event handler for answerCall
+    socket.on("answerCall", (data) => {
+      io.to(data.to).emit("callAccepted", data.signal);
+    });
+
+    // Emitting the socket ID to the client
+    socket.emit("me", socket.id);
+
+    // Function to check if a user is online
+    socket.on("checkOnlineStatus", (id, callback) => {
+      const isOnline = connectedUsers.hasOwnProperty(id);
+      callback({ userId: id, isOnline });
+      console.log("onlineStatus", { userId: id, isOnline });
+    });
+  });
+}
 
 app.get('/', (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
