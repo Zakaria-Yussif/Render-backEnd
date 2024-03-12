@@ -31,10 +31,10 @@ app.use(session({
 app.use('/api/signUp', signupRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/admin', adminRouter);
-app.use('/', employeeRouter);
+app.use('/api/employee', employeeRouter);
 app.use('/api/resetPassword', passwordRouter);
 app.use('/api/pictures', picturesRouter);
-app.use('/', taskRouter);
+app.use('/api/task', taskRouter);
 
 const server = http.createServer(app);
 const io = socketIo(server, {
