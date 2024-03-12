@@ -32,7 +32,7 @@ app.use('/api/signUp', signupRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/employee', employeeRouter);
-app.use('/api/resetPassword', passwordRouter);
+app.use('/api/password', passwordRouter);
 app.use('/api/pictures', picturesRouter);
 app.use('/api/task', taskRouter);
 
