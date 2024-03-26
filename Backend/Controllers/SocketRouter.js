@@ -1,19 +1,21 @@
+const connection = require("../connection");
+const ChatData = require('../Modules/chat');
+const SimplePeer = require('simple-peer');
+const wrtc = require('wrtc');
 
 const connectedUsers = {};
-
-function handleSocketIO(io) {
+  
+const handleSocketIO = async (io) => {
   io.on('connection', (socket) => {
     console.log('a user connected', socket.id);
 
     // Event handler for setting userId
     socket.on('setUserId', (userId) => {
-      // Store the userId along with the socket connection
-      connectedUsers[userId] = socket.id;
-      console.log("User connected with userId:", userId);
-
-      socket.emit('connectedWithId', userId);
+     connectedUsers[userId.userId]=socket.id
+      
+      console.log("Connected users:",Object.keys(connectedUsers));
+      socket.emit('connectedWithId',Object.keys(connectedUsers));
     });
-
     // Event handler for disconnection
     socket.on('disconnect', () => {
       for (const [key, value] of Object.entries(connectedUsers)) {
@@ -26,25 +28,87 @@ function handleSocketIO(io) {
       }
     });
 
-    // Event handler for sending messages
-    socket.on("send_message", (data) => {
-      socket.broadcast.emit("received_message", data);
+    socket.on("typing", ({ typedMessage, userId }) => {
+      const recipientSocketId = connectedUsers[userId];
+      // console.log("type", typedMessage);
+      io.to(recipientSocketId).emit("typing", { Type: typedMessage });
     });
 
-    // Event handler for callUser
+    socket.on('sendMessage', async ({ userId, Message, Img, Time, Name }) => {
+      const recipientSocketId = connectedUsers[userId];
+      // console.log("Recipient Socket ID:", recipientSocketId);
+
+      if (recipientSocketId) {
+        console.log("Recipient is online");
+        io.to(recipientSocketId).emit('messageRev', { Message, userId, Img, Time, Name });
+      } else {
+        console.log("Recipient is offline");
+      }
+
+      console.log("Recipient Socket ID:", recipientSocketId);
+    });
+
     socket.on("callUser", (data) => {
-      io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name });
+      // console.log(data)
+      const dataFrom = connectedUsers[data.from]
+      // console.log("dataFrom", dataFrom)
+      const dataTo = connectedUsers[data.userToCall]
+      // console.log("datato",dataTo);
+      io.to(dataTo).emit("callUser", {
+        signal: data.signalData,
+        from: dataFrom,
+        name: data.name,
+        img:data.img,
+      });
     });
-
-    // Event handler for answerCall
+  
     socket.on("answerCall", (data) => {
-      io.to(data.to).emit("callAccepted", data.signal);
+       console.log("Answering call from" ,data.to);
+      // console.log(data)
+      
+      io.to(data.to).emit("callAccepted", data.signal , data.callImg);
     });
+socket.on("rejectCall",(data)=>{
+// const caller = connectedUsers[data.decodedId]
+  console.log("re",data.decodedId)
+  const img= data.imageUrl
+ io.to(data.caller).emit("declineMessage", {message:' decline Call ', Id:data.decodedId })
+})
 
-    // Emitting the socket ID to the client
-    socket.emit("me", socket.id);
+    //Video Calling... severSide
 
-    // Function to check if a user is online
+      
+     socket.on("callUserVideo", (data) => {
+//  console.log(data)
+  const dataFrom = connectedUsers[data.from]
+//       // console.log("dataFrom", dataFrom)
+   const dataTo = connectedUsers[data.userToCall]
+//       // console.log("datato",dataTo);
+     io.to(dataTo).emit("callUserVideo", {
+   signal: data.signalData,
+       from: dataFrom,
+ name: data.name,
+   img:data.img,
+    });
+  });
+  
+socket.on("answerCallVideo", (data) => {
+//       // console.log(`Answering call from ${data.from}`);
+    io.to(data.to).emit("callAcceptedVideo", data.signal);
+   });
+socket.on("rejectCallVideo",(data)=>{
+ const caller = connectedUsers[data.decodedId]
+//   console.log("re",data.decodedId)
+  const img= data.imageUrl
+ io.to(data.caller).emit("declineMessageVideo", {message:' decline Video Call ', Id:data.decodedId })
+ })
+
+
+
+
+
+
+
     socket.on("checkOnlineStatus", (id, callback) => {
       const isOnline = connectedUsers.hasOwnProperty(id);
       callback({ userId: id, isOnline });
