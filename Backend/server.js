@@ -39,7 +39,7 @@ app.use('/api/task', taskRouter);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-     origin: 'https://mern-stack-app22.onrender.com',
+     origin: 'http://localhost:3000',
     methods: ['GET', 'POST']
   }
 });
@@ -47,19 +47,20 @@ const io = socketIo(server, {
 const connectedUsers = {}; // Corrected typo from 'onst' to 'const'
 
 // Call handleSocketIO function to set up socket.io event handlers
-handleSocketIO(io);
+// handleSocketIO(io);
 
-function handleSocketIO(io) {
   io.on('connection', (socket) => {
     console.log('a user connected', socket.id);
 
     // Event handler for setting userId
     socket.on('setUserId', (userId) => {
       // Store the userId along with the socket connection
-      connectedUsers[userId] = socket.id;
+      connectedUsers[userId.userId] = socket.id;
+      console.log("Connected users:",Object.keys(connectedUsers));
+      socket.emit('connectedWithId',Object.keys(connectedUsers));
       console.log("User connected with userId:", userId);
 
-      socket.emit('connectedWithId', userId);
+    
     });
 
     // Event handler for disconnection
@@ -74,22 +75,95 @@ function handleSocketIO(io) {
       }
     });
 
-    // Event handler for sending messages
-    socket.on("send_message", (data) => {
-      socket.broadcast.emit("received_message", data);
+    // 
+    socket.on("typingData", (data)=>{
+      const receiptTyping = connectedUsers[data.userId]
+      io.to(receiptTyping).emit("typing")
+    })
+
+    socket.on('sendMessage', async ({ userId, Message, Img, Time, Name }) => {
+      const recipientSocketId = connectedUsers[userId];
+      // console.log("Recipient Socket ID:", recipientSocketId);
+
+      if (recipientSocketId) {
+        console.log("Recipient is online");
+        io.to(recipientSocketId).emit('messageRev', { Message, userId, Img, Time, Name });
+      } else {
+        console.log("Recipient is offline");
+      }
+
+      console.log("Recipient Socket ID:", recipientSocketId);
     });
 
-    // Event handler for callUser
+
+
+
+
+
+
     socket.on("callUser", (data) => {
-      io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name });
+      // console.log(data)
+      const dataFrom = connectedUsers[data.from]
+      // console.log("dataFrom", dataFrom)
+      const dataTo = connectedUsers[data.userToCall]
+      // console.log("datato",dataTo);
+      io.to(dataTo).emit("callUser", {
+        signal: data.signalData,
+        from: dataFrom,
+        name: data.name,
+        img:data.img,
+      });
     });
-
-    // Event handler for answerCall
+  
     socket.on("answerCall", (data) => {
-      io.to(data.to).emit("callAccepted", data.signal);
+       console.log("Answering call from" ,data.to);
+      // console.log(data)
+      
+      io.to(data.to).emit("callAccepted", data.signal );
     });
+socket.on("rejectCall",(data)=>{
+// const caller = connectedUsers[data.decodedId]
+  console.log("re",data.decodedId)
+  const img= data.imageUrl
+ io.to(data.caller).emit("declineMessage", {message:' decline Call ', Id:data.decodedId })
+})
 
-    // Emitting the socket ID to the client
+    //Video Calling... severSide
+
+      
+     socket.on("callUserVideo", (data) => {
+//  console.log(data)
+  const dataFrom = connectedUsers[data.from]
+//       // console.log("dataFrom", dataFrom)
+   const dataTo = connectedUsers[data.userToCall]
+//       // console.log("datato",dataTo);
+     io.to(dataTo).emit("callUserVideo", {
+   signal: data.signalData,
+       from: dataFrom,
+ name: data.name,
+   img:data.img,
+    });
+  });
+  
+socket.on("answerCallVideo", (data) => {
+//       // console.log(`Answering call from ${data.from}`);
+    io.to(data.to).emit("callAcceptedVideo", data.signal);
+   });
+socket.on("rejectCallVideo",(data)=>{
+ const caller = connectedUsers[data.decodedId]
+//   console.log("re",data.decodedId)
+  const img= data.imageUrl
+ io.to(data.caller).emit("declineMessageVideo", {message:' decline Video Call ', Id:data.decodedId })
+ })
+
+
+
+
+
+
+
+
+
     socket.emit("me", socket.id);
 
     // Function to check if a user is online
@@ -99,7 +173,7 @@ function handleSocketIO(io) {
       console.log("onlineStatus", { userId: id, isOnline });
     });
   });
-}
+
 
 app.get('/', (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
