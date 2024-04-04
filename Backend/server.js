@@ -4,6 +4,7 @@ const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const connection = require("./connection");
+const ChatData = require("./Modules/chatData")
 const cors = require('cors');
 
 const signupRouter = require('./Controllers/SignUpRouter');
@@ -39,7 +40,7 @@ app.use('/api/task', taskRouter);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-     origin: 'http://localhost:3000',
+     origin: 'https://mern-stack-app22.onrender.com',
     methods: ['GET', 'POST']
   }
 });
@@ -49,16 +50,18 @@ const connectedUsers = {}; // Corrected typo from 'onst' to 'const'
 // Call handleSocketIO function to set up socket.io event handlers
 // handleSocketIO(io);
 
-  io.on('connection', (socket) => {
+  io.on('connection',  (socket) => {
     console.log('a user connected', socket.id);
 
     // Event handler for setting userId
-    socket.on('setUserId', (userId) => {
+    socket.on('setUserId', async (userId) => {
       // Store the userId along with the socket connection
       connectedUsers[userId.userId] = socket.id;
       console.log("Connected users:",Object.keys(connectedUsers));
       socket.emit('connectedWithId',Object.keys(connectedUsers));
       console.log("User connected with userId:", userId);
+
+     
 
     
     });
@@ -81,22 +84,70 @@ const connectedUsers = {}; // Corrected typo from 'onst' to 'const'
       io.to(receiptTyping).emit("typing")
     })
 
-    socket.on('sendMessage', async ({ userId, Message, Img, Time, Name }) => {
+    
+
+    socket.on('sendMessage', async ({ senderId, userId, Message ,Img, Time }) => {
       const recipientSocketId = connectedUsers[userId];
-      // console.log("Recipient Socket ID:", recipientSocketId);
-
       if (recipientSocketId) {
-        console.log("Recipient is online");
-        io.to(recipientSocketId).emit('messageRev', { Message, userId, Img, Time, Name });
+          // Emit message to recipient
+          io.to(recipientSocketId).emit('messageRev', { userId, Message,Img,Time });
+  
+          try {
+              // Store message in the database
+              const newMessage = await ChatData.create({
+                  senderId:senderId,
+                  userId:userId,
+                  Message:Message,
+                  Time:Time,
+                  Img:Img
+              });
+              console.log('Message saved:', newMessage);
+          } catch (error) {
+              console.error('Error saving message:', error);
+          }
       } else {
-        console.log("Recipient is offline");
+          console.log('Recipient is offline');
       }
-
-      console.log("Recipient Socket ID:", recipientSocketId);
-    });
+  });
 
 
+  socket.on('storedChatData', async ({ senderId, userId }) => {
 
+    console.log("senderId",senderId)
+    console.log("userId",userId)
+    try {
+        // Retrieve messages from the database
+        const messages = await ChatData.find({
+          $or: [
+              { senderId, userId },
+              { senderId: userId, userId: senderId }
+          ]
+      }).sort({ timestamp: 1 });
+ console.log( "messages",messages)
+        // Emit messages to the client
+        socket.emit('messagesStored', { messages });
+    } catch (error) {
+        console.error('Error retrieving messages:', error);
+    }
+});
+
+
+
+
+
+
+
+// socket.on("storeMess", async (data)=>{
+// console.log(data.userId)
+//   const ID= data.userId
+//   console.log("rtghh",ID)
+//   const findMessages = await ChatData.find({ID})
+//    console.log("test",findMessages)
+//   if(findMessages){
+//    io.emit("storedMessSend",{findMessages})
+//   }
+
+// })
 
 
 
