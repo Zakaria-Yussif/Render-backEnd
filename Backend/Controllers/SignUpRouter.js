@@ -45,8 +45,8 @@ router.post('/', async (req, res) => {
                     <p>Welcome to ConnectTeam!</p>
                     <p>You have been successfully created an Account.</p>
                     <p>To complete the registration process and activate your account, please click the button below:</p>
-                    <a href="http://localhost:3000/confirm-account?email=${email}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Confirm Account</a>
-                    <p>If the button above does not work, you can also click <a href="http://localhost:3000/confirm-account?email=${email}">here</a>.</p>
+                    <a href="https://mern-stack-app22.onrender.com/login" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Confirm Account</a>
+                    <p>If the button above does not work, you can also click <a href="https://mern-stack-app22.onrender.com/login">here</a>.</p>
                     <p>By confirming your account, you will gain access to all the features and benefits of our platform/service.</p>
                     <p>If you have any questions or encounter any issues, please don't hesitate to contact our support team at [Support Contact Information].</p>
                     <p>Thank you for choosing ConnectTeam!</p>
