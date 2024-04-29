@@ -454,7 +454,7 @@ var mailOptions = {
    
    
 <div></div>
-    <a href="http://https://mern-stack-app22.onrender.com/login">Please, login in your Accounts for more datails.</a>
+    <a href="https://mern-stack-app22.onrender.com/login">Please, login in your Accounts for more datails.</a>
     <img src="https://plus.unsplash.com/premium_photo-1661396653077-f0e36d12398e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjV8fGVtcGxveWVlJTIwdGFza3xlbnwwfHwwfHx8MA%3D%3D" style="display: inline-block; margin-top: 20px; height: 150px; width: 420px;" />
     <p>Thank you for choosing ConnectTeam!</p>
 

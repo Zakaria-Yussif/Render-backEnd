@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
                     <p>By confirming your account, you will gain access to all the features and benefits of our platform/service.</p>
                     <p>If you have any questions or encounter any issues, please don't hesitate to contact our support team at [Support Contact Information].</p>
                     <p>Thank you for choosing ConnectTeam!</p>
-                    <a href="http://localhost:3000/login">Please login to your account for more details.</a>
+                    <a href="https://mern-stack-app22.onrender.com/login">Please login to your account for more details.</a>
                     <img src="https://plus.unsplash.com/premium_photo-1661396653077-f0e36d12398e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjV8fGVtcGxveWVlJTIwdGFza3xlbnwwfHwwfHx8MA%3D%3D" style="display: block; margin-top: 20px; height: 150px; width: 420px;" />
                     <p>Thank you for choosing ConnectTeam!</p>
                     <div style="font-size: 15px; display: flex; flex-direction: row; margin-top: 20px;">
