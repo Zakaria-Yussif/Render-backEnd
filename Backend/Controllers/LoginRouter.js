@@ -15,12 +15,10 @@ router.post('/', async (req, res) => {
     const { password, email } = req.body;
     try {
         const user = await SignUp.findOne({ email });
-        if (!user) {
-            return res.status(401).json({ msg: "Invalid email" });
-        }
+        
         
         const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
+        if (!isValidPassword || !user) {
             return res.status(401).json({ msg: "Invalid password" });
         }
         
