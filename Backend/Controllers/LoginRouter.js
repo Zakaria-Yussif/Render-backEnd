@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
@@ -14,29 +12,33 @@ const saltRounds = 10;
 router.post('/', async (req, res) => {
     const { password, email } = req.body;
     try {
+        // Find user by email
         const user = await SignUp.findOne({ email });
         
+        // If user is not found or password is invalid, return 401
+        if (!user) {
+            return res.status(401).json({ msg: "User not found" });
+        }
         
+        // Compare passwords
         const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword || !user) {
+        if (!isValidPassword) {
             return res.status(401).json({ msg: "Invalid password" });
         }
         
+        // Generate JWT token
         const token = jwt.sign({
             userId: user._id,
             email: user.email,
             name: user.name
-        }, process.env.ACCESS_TOKEN_SECRETE, { expiresIn: '1h' }); // Adjust expiration time as needed
+        }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' }); // Corrected the typo in ACCESS_TOKEN_SECRET
         
+        // Send token in response
         res.json({ token });
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).json({ error: "Server error" });
     }
 });
-
-
-
-
 
 module.exports = router;
