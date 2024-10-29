@@ -9,14 +9,15 @@ router.use(session({
   }));
 
 const adminUser = [
-    { id: 1, email: "zackyoung31@gmail.com", isAdmin:false},
+    { id: 1, email: "zackyoung31@gmail.com", name:"AdminName" ,isAdmin:false},
     {id:2, email: "zackyaroo31@gmail.com", isAdmin:false},
     
   ];
   
   router.post("/", (req, res) => {
-    const { email } = req.body;
+    const { email,name } = req.body;
    console.log( "email",email)
+   console.log("name",name)
     // Check if the user is an admin
     const isAdmin = adminUser.some(user => user.email === email);
   
@@ -24,7 +25,7 @@ const adminUser = [
       // Set a session variable to mark the user as authenticated
       req.session.isAdmin = true;
   console.log(req.session.isAdmin)
-      return res.status(200).json({ msg: "Welcome to AdminPage" });
+      return res.status(200).json({ msg: "Welcome to AdminPage"  });
     } else {
       return res.status(401).json({ msg: "Unauthorized user" });
     }

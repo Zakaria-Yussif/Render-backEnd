@@ -6,7 +6,7 @@ const session = require('express-session');
 const connection = require("./connection");
 const ChatData = require("./Modules/chatData")
 
-const cors = require('cors');
+ const cors = require('cors');
 
 const signupRouter = require('./Controllers/SignUpRouter');
 const loginRouter = require('./Controllers/LoginRouter');
@@ -14,10 +14,10 @@ const adminRouter = require('./Controllers/AdminRouter');
 const employeeRouter = require('./Controllers/EmployeeRouter');
 const passwordRouter = require('./Controllers/PasswordRouter');
 const picturesRouter = require('./Controllers/PicturesRouter');
-const taskRouter = require('./Controllers/TaskRouter');
+ const taskRouter = require('./Controllers/TaskRouter');
 
 const app = express();
-const port = 8700;
+const port = 8900;
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -41,7 +41,8 @@ app.use('/api/task', taskRouter);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-     origin: 'https://mern-stack-app22.onrender.com',
+    //  origin: 'https://mern-stack-app22.onrender.com',
+    origin:"http://localhost:3000",
     methods: ['GET', 'POST']
   }
 });
@@ -49,8 +50,7 @@ const io = socketIo(server, {
 const connectedUsers = {}; // Corrected typo from 'onst' to 'const'
 
 // Call handleSocketIO function to set up socket.io event handlers
-// handleSocketIO(io);
-
+// handleSocketIO(io)
   io.on('connection',  (socket) => {
     console.log('a user connected', socket.id);
 
