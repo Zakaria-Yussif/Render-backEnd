@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+
 const nodemailer = require('nodemailer');
 const SignUp = require('../Modules/signUp'); // Assuming you have a SignUp model
 const saltRounds = 10; // Number of salt rounds for bcrypt hashing

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+
 const jwt = require('jsonwebtoken'); // Import jwt module
 const connection = require("../connection")
 const SignUp = require('../Modules/signUp'); // Assuming you have a SignUp model
