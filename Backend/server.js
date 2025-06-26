@@ -15,6 +15,13 @@ const employeeRouter = require('./Controllers/EmployeeRouter');
 const passwordRouter = require('./Controllers/PasswordRouter');
 const picturesRouter = require('./Controllers/PicturesRouter');
  const taskRouter = require('./Controllers/TaskRouter');
+ const salesRouter = require('./Controllers/SalesRouter');
+ const newOrderRouter = require('./Controllers/NewOrderRouter');
+ 
+//  const NewOrder = require('./Controllers/TaskRouter');
+
+
+
 
 const app = express();
 const port = 8900;
@@ -37,6 +44,10 @@ app.use('/api/employee', employeeRouter);
 app.use('/api/password', passwordRouter);
 app.use('/api/pictures', picturesRouter);
 app.use('/api/task', taskRouter);
+app.use('/api/sales', salesRouter);
+
+ app.use('/api/newOrder', newOrderRouter);
+
 
 const server = http.createServer(app);
 const io = socketIo(server, {
