@@ -1,152 +1,128 @@
 const express = require('express');
 const router = express.Router();
-const session = require('express-session');
-const Sales = require("../Modules/sales")
- const ProfileImgs = require("../Modules/profilePicture")
-const connection = require("../connection")
+const Sales = require("../Modules/sales");
 
 router.post('/saveSales', async (req, res) => {
-    try {
-      const {
-        checked,
-        ID,
-        
-    Product,
-    Status,
-    Liters,
-    Quantity,
-    Price,
-    TotalPrice,
-    Name,
-        
-        
-      } = req.body;
-     
-    //   let findPicture= await ProfileImgs.findOne({Email})
-    //   // console.log(findPicture)
-    //   const profilePicture = findPicture ? findPicture.Picture : null;
-      // Create a new employee entry using the EmployeeList model
-      const newEmployee = await EmployeeList.create({
-       
-        ID,
-        
-    Product,
-    Status,
-    Liters,
-    Quantity,
-    Price,
-    TotalPrice,
-    Name,
-      });
-  
-      console.log('Data created:', newEmployee);
-      res.status(200).json({ message: 'Data created', newEmployee });
-    } catch (error) {
-      console.error('Error creating data:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+  try {
+    const {
+      checked,
+      ID,
+      Product,
+      Status,
+      Liters,
+      Quantity,
+      Price,
+      TotalPrice,
+      Name,
+    } = req.body;
+
+    const newSale = await Sales.create({
+      ID,
+      Product,
+      Status,
+      Liters,
+      Quantity,
+      Price,
+      TotalPrice,
+      Name,
+    });
+
+    console.log('Sale created:', newSale);
+    res.status(200).json({ message: 'Sale created', newSale });
+  } catch (error) {
+    console.error('Error creating sale:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.get("/getSales", async (req, res) => {
+  try {
+    const salesList = await Sales.find({});
+    if (salesList.length === 0) {
+      console.log("No sales data found");
+      return res.status(200).json({ message: 'No sales data found', sales: [] });
     }
-  });
-  
-  router.get("/getSales", async (req, res) => {
-    try {
-      const SalesList = await Sales.find({});
-       const SalesInfo=[]
-    //    console.log(EmployeeInfo)
-      if (SalesList.length === 0) {
-        console.log("No new data");
-        return res.status(201).json({ mgs: 'No new data' });
-      }
-      const arrayWithDuplicates = SalesList;
-  const uniqueArray = arrayWithDuplicates.filter((value, index, self) => self.indexOf(value) === index);
-  
-      console.log(uniqueArray)
-      return res.status(200).json({mgs:"uniqueArray",uniqueArray})
-      
-      
-      
-    } catch (error) {
-      console.error('Error fetching employees:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  });
-  
-  router.post("/SalesUpdates", async (req, res) => {
-    try {
-      const {
-        checked,
-        _id,
-        
-        
-    Product,
-    Status,
-    Liters,
-    Quantity,
-    Price,
-    TotalPrice,
-    Name,
-      } = req.body;
-  
-      // Validate the incoming data
-      if (!_id || typeof _id !== "string") {
-        return res.status(400).json({ error: "Invalid or missing ID in the request." });
-      }
-  
-      // Assuming EmployeeList is a valid MongoDB collection
-      const existingEmployee = await SalesList.findOne({ _id });
-  
-      if (!existingEmployee) {
-        return res.status(404).json({ error: "Employee not found." });
-      }
-  
-      // Implement your update logic here
-      const updatedEmployee = await SalesList.findOneAndUpdate(
-        { _id },
-        {
-            ID,
-        
-            Product,
-            Status,
-            Liters,
-            Quantity,
-            Price,
-            TotalPrice,
-            Name,
-        },
-        { new: true } // Return the updated document
-      );
-  
-      res.status(200).json({ msg: "Employee data updated successfully.", data: updatedEmployee });
-      console.log(updatedEmployee)
-    } catch (error) {
-      console.error("Error in /employeeUpdates route:", error);
-      res.status(500).json({ error: "Internal server error." });
-    }
-  });
-  
-  
-  router.post("/deleteSales", async (req, res) => {
-    const { _id } = req.body;
-    console.log(_id);
-  
+
+    // Remove duplicates by _id (assuming _id is unique in MongoDB but in case duplicates happen)
+    const uniqueSales = Array.from(new Map(salesList.map(item => [item._id.toString(), item])).values());
+
+    console.log("Unique sales:", uniqueSales);
+    return res.status(200).json({ message: "Sales retrieved", sales: uniqueSales });
+
+  } catch (error) {
+    console.error('Error fetching sales:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.post("/SalesUpdates", async (req, res) => {
+  try {
+    const {
+      checked,
+      _id,
+      ID,
+      Product,
+      Status,
+      Liters,
+      Quantity,
+      Price,
+      TotalPrice,
+      Name,
+    } = req.body;
+
     if (!_id || typeof _id !== "string") {
-      return res.status(400).json({ error: "Invalid or missing ID in the request." });
+      return res.status(400).json({ error: "Invalid or missing _id in the request." });
     }
-  
-    // Use findOne to find the employee by ID
-    const findID = await SalesListList.findOne({ _id });
-  
-    if (!findID) {
-      return res.status(404).json({ error: "Employee not found." });
+
+    const existingSale = await Sales.findOne({ _id });
+    if (!existingSale) {
+      return res.status(404).json({ error: "Sale record not found." });
     }
-  
-    // Remove the employee from the database
-    await SalesList.deleteOne({ _id });
-  
-    // Respond with a JSON object containing a message and the deleted employee information
-    res.status(200).json({ msg: "Employee Deleted Successfully.", findID });
-  
-    // Log the deleted employee information
-  });
-  
-  module.exports = router;
-  
+
+    const updatedSale = await Sales.findOneAndUpdate(
+      { _id },
+      {
+        ID,
+        Product,
+        Status,
+        Liters,
+        Quantity,
+        Price,
+        TotalPrice,
+        Name,
+      },
+      { new: true }
+    );
+
+    console.log("Sale updated:", updatedSale);
+    res.status(200).json({ message: "Sale updated successfully.", sale: updatedSale });
+  } catch (error) {
+    console.error("Error updating sale:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+router.post("/deleteSales", async (req, res) => {
+  try {
+    const { _id } = req.body;
+
+    if (!_id || typeof _id !== "string") {
+      return res.status(400).json({ error: "Invalid or missing _id in the request." });
+    }
+
+    const saleToDelete = await Sales.findOne({ _id });
+    if (!saleToDelete) {
+      return res.status(404).json({ error: "Sale record not found." });
+    }
+
+    await Sales.deleteOne({ _id });
+
+    console.log("Sale deleted:", saleToDelete);
+    res.status(200).json({ message: "Sale deleted successfully.", sale: saleToDelete });
+  } catch (error) {
+    console.error("Error deleting sale:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+module.exports = router;
