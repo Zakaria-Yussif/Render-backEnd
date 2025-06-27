@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
     try {
         // Find user by email
         const user = await SignUp.findOne({ email });
-        console.log("user", user )
+        // console.log("user", user )
         
         // If user is not found or password is invalid, return 401
         if (!user) {
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
         
         // Compare passwords
         const isValidPassword = await bcrypt.compare(password, user.password);
-              console.log("isValidPassword",isValidPassword)
+              // console.log("isValidPassword",isValidPassword)
         if (!isValidPassword) {
             return res.status(401).json({ msg: "Invalid password" });
         }
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
             userId: user._id,
             email: user.email,
             name: user.name
-        }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' }); // Corrected the typo in ACCESS_TOKEN_SECRET
+        }, process.env.ACCESS_TOKEN_SECRETE, { expiresIn: '1h' }); // Corrected the typo in ACCESS_TOKEN_SECRET
         
         // Send token in response
         res.json({ token });
