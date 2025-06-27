@@ -16,6 +16,7 @@ router.post('/', async (req, res) => {
     try {
         // Find user by email
         const user = await SignUp.findOne({ email });
+        console.log("user", user )
         
         // If user is not found or password is invalid, return 401
         if (!user) {
