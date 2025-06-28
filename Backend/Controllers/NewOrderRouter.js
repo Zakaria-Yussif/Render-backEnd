@@ -9,15 +9,18 @@ router.post('/saveNewOrder', async (req, res) => {
     try {
       const {
         checked,
-        ID,
+       ID,
         
         Product,
-        Boxes,
-        Liters,
-        Retailer,
-        Quantity,
-        Price,
+        
+      Liters,
+      Retailer,
+      numberOfItems,
+
+        NumberOfBoxes,
+        PricePerItem,
         TotalPrice,
+
         
       } = req.body;
      
@@ -26,14 +29,16 @@ router.post('/saveNewOrder', async (req, res) => {
     //   const profilePicture = findPicture ? findPicture.Picture : null;
       // Create a new employee entry using the EmployeeList model
       const newEmployee = await EmployeeList.create({
-        ID,
+               ID,
         
         Product,
-        Boxes,
-        Liters,
-        Retailer,
-        Quantity,
-        Price,
+        
+      Liters,
+      Retailer,
+      numberOfItems,
+
+        NumberOfBoxes,
+        PricePerItem,
         TotalPrice,
        
        
@@ -77,12 +82,16 @@ router.post('/saveNewOrder', async (req, res) => {
         _id,
         
         
+               
+        
         Product,
-        Boxes,
-        Liters,
-        Retailer,
-        Quantity,
-        Price,
+        
+      Liters,
+      Retailer,
+      numberOfItems,
+
+        NumberOfBoxes,
+        PricePerItem,
         TotalPrice,
       } = req.body;
   
@@ -104,13 +113,17 @@ router.post('/saveNewOrder', async (req, res) => {
         {
             
         
-            Product,
-            Boxes,
-            Liters,
-            Retailer,
-            Quantity,
-            Price,
-            TotalPrice,
+                   
+        
+        Product,
+        
+      Liters,
+      Retailer,
+      numberOfItems,
+
+        NumberOfBoxes,
+        PricePerItem,
+        TotalPrice,
         },
         { new: true } // Return the updated document
       );
