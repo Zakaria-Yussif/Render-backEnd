@@ -1,165 +1,131 @@
 const express = require('express');
 const router = express.Router();
-const session = require('express-session');
-const EmployeeList = require("../Modules/newOder")
- const ProfileImgs = require("../Modules/profilePicture")
-const connection = require("../connection")
+const EmployeeList = require("../Modules/newOder"); // This seems to be your newOrder model
+// const ProfileImgs = require("../Modules/profilePicture"); // Unused
+// const session = require('express-session'); // Unused
+// const connection = require("../connection"); // Unused
 
+// ========== CREATE NEW ORDER ==========
 router.post('/saveNewOrder', async (req, res) => {
-    try {
-      const {
-        checked,
-       ID,
-        
-        Product,
-        
+  try {
+    const {
+      ID,
+      Product,
       Liters,
       Retailer,
       numberOfItems,
+      NumberOfBoxes,
+      PricePerItem,
+      TotalPrice
+    } = req.body;
 
-        NumberOfBoxes,
-        PricePerItem,
-        TotalPrice,
-
-        
-      } = req.body;
-     
-    //   let findPicture= await ProfileImgs.findOne({Email})
-    //   // console.log(findPicture)
-    //   const profilePicture = findPicture ? findPicture.Picture : null;
-      // Create a new employee entry using the EmployeeList model
-      const newEmployee = await EmployeeList.create({
-               ID,
-        
-        Product,
-        
+    const newOrder = await EmployeeList.create({
+      ID,
+      Product,
       Liters,
       Retailer,
       numberOfItems,
+      NumberOfBoxes,
+      PricePerItem,
+      TotalPrice
+    });
 
-        NumberOfBoxes,
-        PricePerItem,
-        TotalPrice,
-       
-       
-      });
-  
-      console.log('Data created:', newEmployee);
-      res.status(200).json({ message: 'Data created', newEmployee });
-    } catch (error) {
-      console.error('Error creating data:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+    console.log('New order created:', newOrder);
+    res.status(200).json({ message: 'New order saved successfully', newOrder });
+  } catch (error) {
+    console.error('Error saving new order:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+// ========== GET NEW ORDERS ==========
+router.get("/getNewOrder", async (req, res) => {
+  try {
+    const orders = await EmployeeList.find({});
+
+    if (orders.length === 0) {
+      return res.status(201).json({ message: 'No new orders available' });
     }
-  });
-  
-  router.get("/getNewOrder", async (req, res) => {
-    try {
-      const allEmployeeList = await EmployeeList.find({});
-       const EmployeeInfo=[]
-       console.log(EmployeeInfo)
-      if (allEmployeeList.length === 0) {
-        console.log("No new data");
-        return res.status(201).json({ mgs: 'No new data' });
-      }
-      const arrayWithDuplicates = allEmployeeList;
-  const uniqueArray = arrayWithDuplicates.filter((value, index, self) => self.indexOf(value) === index);
-  
-      console.log(uniqueArray)
-      return res.status(200).json({mgs:"uniqueArray",uniqueArray})
-      
-      
-      
-    } catch (error) {
-      console.error('Error fetching employees:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  });
-  
-  router.post("/newOrderUpdates", async (req, res) => {
-    try {
-      const {
-        checked,
-        _id,
-        
-        
-               
-        
-        Product,
-        
+
+    // Ensure uniqueness by _id (MongoDB’s default unique field)
+    const uniqueOrders = Array.from(new Map(orders.map(order => [order._id.toString(), order])).values());
+
+    console.log("Fetched unique orders:", uniqueOrders);
+    return res.status(200).json({ message: "Fetched unique orders", uniqueArray: uniqueOrders });
+  } catch (error) {
+    console.error('Error fetching new orders:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+// ========== UPDATE NEW ORDER ==========
+router.post("/newOrderUpdates", async (req, res) => {
+  try {
+    const {
+      _id,
+      Product,
       Liters,
       Retailer,
       numberOfItems,
+      NumberOfBoxes,
+      PricePerItem,
+      TotalPrice
+    } = req.body;
 
-        NumberOfBoxes,
-        PricePerItem,
-        TotalPrice,
-      } = req.body;
-  
-      // Validate the incoming data
-      if (!_id || typeof _id !== "string") {
-        return res.status(400).json({ error: "Invalid or missing ID in the request." });
-      }
-  
-      // Assuming EmployeeList is a valid MongoDB collection
-      const existingEmployee = await EmployeeList.findOne({ _id });
-  
-      if (!existingEmployee) {
-        return res.status(404).json({ error: "Employee not found." });
-      }
-  
-      // Implement your update logic here
-      const updatedEmployee = await EmployeeList.findOneAndUpdate(
-        { _id },
-        {
-            
-        
-                   
-        
-        Product,
-        
-      Liters,
-      Retailer,
-      numberOfItems,
-
-        NumberOfBoxes,
-        PricePerItem,
-        TotalPrice,
-        },
-        { new: true } // Return the updated document
-      );
-  
-      res.status(200).json({ msg: "Employee data updated successfully.", data: updatedEmployee });
-      console.log(updatedEmployee)
-    } catch (error) {
-      console.error("Error in /employeeUpdates route:", error);
-      res.status(500).json({ error: "Internal server error." });
+    if (!_id) {
+      return res.status(400).json({ error: "Missing order ID" });
     }
-  });
-  
-  
-  router.post("/deleteNewOrder", async (req, res) => {
+
+    const updatedOrder = await EmployeeList.findOneAndUpdate(
+      { _id },
+      {
+        Product,
+        Liters,
+        Retailer,
+        numberOfItems,
+        NumberOfBoxes,
+        PricePerItem,
+        TotalPrice
+      },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    console.log("Order updated:", updatedOrder);
+    res.status(200).json({ message: "Order updated successfully", data: updatedOrder });
+  } catch (error) {
+    console.error("Error updating order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// ========== DELETE NEW ORDER ==========
+router.post("/deleteNewOrder", async (req, res) => {
+  try {
     const { _id } = req.body;
-    console.log(_id);
-  
-    if (!_id || typeof _id !== "string") {
-      return res.status(400).json({ error: "Invalid or missing ID in the request." });
+
+    if (!_id) {
+      return res.status(400).json({ error: "Missing order ID" });
     }
-  
-    // Use findOne to find the employee by ID
-    const findID = await EmployeeList.findOne({ _id });
-  
-    if (!findID) {
-      return res.status(404).json({ error: "Employee not found." });
+
+    const deletedOrder = await EmployeeList.findOneAndDelete({ _id });
+
+    if (!deletedOrder) {
+      return res.status(404).json({ error: "Order not found" });
     }
-  
-    // Remove the employee from the database
-    await EmployeeList.deleteOne({ _id }) ;
-  
-    // Respond with a JSON object containing a message and the deleted employee information
-    res.status(200).json({ msg: "Employee Deleted Successfully.", findID });
-  
-    // Log the deleted employee information
-  });
-  
-  module.exports = router;
-  
+
+    console.log("Deleted order:", deletedOrder);
+    res.status(200).json({ message: "Order deleted successfully", deletedOrder });
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+module.exports = router;
