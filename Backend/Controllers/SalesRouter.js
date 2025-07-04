@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const multer = require("multer");
+const nodemailer = require("nodemailer");
 const Sales = require("../Modules/sales");
 
 router.post('/saveSales', async (req, res) => {
@@ -124,5 +126,68 @@ router.post("/deleteSales", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+
+
+
+
+// Multer setup to receive file from form-data
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+router.post("/sendReceipt", upload.single("file"), async (req, res) => {
+  try {
+    const { name, phone, email, total, receiptNo, date } = req.body;
+    const receiptFile = req.file;
+
+    if (!receiptFile || !email) {
+      return res.status(400).json({ msg: "File or email missing" });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "zakarias.yussif@gmail.com",
+        pass: "quizcazzmqwwethj",
+      },
+    });
+
+    const mailOptions = {
+      from: "zakarias.yussif@gmail.com",
+      to: email,
+      subject: "Your Purchase Receipt - White Olives Ltd",
+      html: `
+        <div style="font-family: Arial, sans-serif; margin: 20px;">
+          <h2>Thank you for your purchase, ${name}!</h2>
+          <p>Here are the details of your transaction:</p>
+          <ul>
+            <li><strong>Receipt No:</strong> ${receiptNo}</li>
+            <li><strong>Date:</strong> ${date}</li>
+            <li><strong>Total:</strong> ₵${total}</li>
+          </ul>
+          <p>Your receipt is attached to this email.</p>
+          <br/>
+          <p style="font-size: 12px; color: gray;">White Olives Ltd — Agona-Ashanti</p>
+        </div>
+      `,
+      attachments: [
+        {
+          filename: `${receiptNo}.pdf`,
+          content: receiptFile.buffer,
+          contentType: "application/pdf",
+        },
+      ],
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ msg: "Receipt emailed successfully" });
+  } catch (err) {
+    console.error("Email sending error:", err);
+    res.status(500).json({ msg: "Failed to send email" });
+  }
+});
+
+module.exports = router;
+
 
 module.exports = router;
