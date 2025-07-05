@@ -197,7 +197,6 @@ router.post("/sendReceipt", upload.single("file"), async (req, res) => {
 router.post("/send-sms", async (req, res) => {
   const { to, message } = req.body;
 
-  // Basic input validation
   if (!to || !message) {
     return res.status(400).json({
       success: false,
@@ -216,10 +215,12 @@ router.post("/send-sms", async (req, res) => {
   try {
     console.log(`📨 Sending SMS from ${fromNumber} to ${to}`);
 
-    const response = await client.messages.create({
+    const formattedTo = to.startsWith("+") ? to : `+${to}`;
+
+    const response = await twilioClient.messages.create({
       body: message,
       from: fromNumber,
-      to: to.startsWith("+") ? to : `+${to}`, // Ensure it's in E.164 format
+      to: formattedTo,
     });
 
     console.log("✅ SMS sent. SID:", response.sid);
@@ -230,7 +231,6 @@ router.post("/send-sms", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
 module.exports = router;
 
 
