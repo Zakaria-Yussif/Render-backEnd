@@ -3,6 +3,10 @@ const router = express.Router();
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const Sales = require("../Modules/sales");
+const twilio = require('twilio');
+const accountSid = process.env.TWILIO_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioClient = twilio(accountSid, authToken)
 
 router.post('/saveSales', async (req, res) => {
   try {
@@ -186,6 +190,23 @@ router.post("/sendReceipt", upload.single("file"), async (req, res) => {
     res.status(500).json({ msg: "Failed to send email" });
   }
 });
+
+
+// server.js
+router.post("/send-sms", async (req, res) => {
+  const { to, message } = req.body;
+  try {
+    const response = await client.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to
+    });
+    res.json({ success: true, sid: response.sid });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 
 module.exports = router;
 
