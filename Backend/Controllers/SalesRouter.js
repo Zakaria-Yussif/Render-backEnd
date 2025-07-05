@@ -196,6 +196,8 @@ router.post("/sendReceipt", upload.single("file"), async (req, res) => {
 // POST /send-sms
 router.post("/send-sms", async (req, res) => {
   const { to, message } = req.body;
+  console.log("to",to)
+    console.log("mess",message)
 
   if (!to || !message) {
     return res.status(400).json({
