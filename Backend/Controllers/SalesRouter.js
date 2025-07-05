@@ -193,20 +193,43 @@ router.post("/sendReceipt", upload.single("file"), async (req, res) => {
 
 
 // server.js
+// POST /send-sms
 router.post("/send-sms", async (req, res) => {
   const { to, message } = req.body;
+
+  // Basic input validation
+  if (!to || !message) {
+    return res.status(400).json({
+      success: false,
+      error: "Missing 'to' or 'message' in request body",
+    });
+  }
+
+  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+  if (!fromNumber) {
+    return res.status(500).json({
+      success: false,
+      error: "TWILIO_PHONE_NUMBER not configured in environment",
+    });
+  }
+
   try {
+    console.log(`📨 Sending SMS from ${fromNumber} to ${to}`);
+
     const response = await client.messages.create({
       body: message,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to
+      from: fromNumber,
+      to: to.startsWith("+") ? to : `+${to}`, // Ensure it's in E.164 format
     });
+
+    console.log("✅ SMS sent. SID:", response.sid);
+
     res.json({ success: true, sid: response.sid });
   } catch (error) {
+    console.error("❌ Twilio SMS Error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
 
 module.exports = router;
 
