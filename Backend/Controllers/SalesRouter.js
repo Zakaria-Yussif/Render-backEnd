@@ -3,10 +3,10 @@ const router = express.Router();
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const Sales = require("../Modules/sales");
-const twilio = require('twilio');
-const accountSid = process.env.TWILIO_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioClient = twilio(accountSid, authToken)
+// const twilio = require('twilio');
+// const accountSid = process.env.TWILIO_SID;
+// const authToken = process.env.TWILIO_AUTH_TOKEN;
+// const twilioClient = twilio(accountSid, authToken)
 
 router.post('/saveSales', async (req, res) => {
   try {
@@ -194,45 +194,45 @@ router.post("/sendReceipt", upload.single("file"), async (req, res) => {
 
 // server.js
 // POST /send-sms
-router.post("/send-sms", async (req, res) => {
-  const { to, message } = req.body;
-  console.log("to",to)
-    console.log("mess",message)
+// router.post("/send-sms", async (req, res) => {
+//   const { to, message } = req.body;
+//   console.log("to",to)
+//     console.log("mess",message)
 
-  if (!to || !message) {
-    return res.status(400).json({
-      success: false,
-      error: "Missing 'to' or 'message' in request body",
-    });
-  }
+//   if (!to || !message) {
+//     return res.status(400).json({
+//       success: false,
+//       error: "Missing 'to' or 'message' in request body",
+//     });
+//   }
 
-  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
-  if (!fromNumber) {
-    return res.status(500).json({
-      success: false,
-      error: "TWILIO_PHONE_NUMBER not configured in environment",
-    });
-  }
+//   const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+//   if (!fromNumber) {
+//     return res.status(500).json({
+//       success: false,
+//       error: "TWILIO_PHONE_NUMBER not configured in environment",
+//     });
+//   }
 
-  try {
-    console.log(`📨 Sending SMS from ${fromNumber} to ${to}`);
+//   try {
+//     console.log(`📨 Sending SMS from ${fromNumber} to ${to}`);
 
-    const formattedTo = to.startsWith("+") ? to : `+${to}`;
+//     const formattedTo = to.startsWith("+") ? to : `+${to}`;
 
-    const response = await twilioClient.messages.create({
-      body: message,
-      from: fromNumber,
-      to: formattedTo,
-    });
+//     const response = await twilioClient.messages.create({
+//       body: message,
+//       from: fromNumber,
+//       to: formattedTo,
+//     });
 
-    console.log("✅ SMS sent. SID:", response.sid);
+//     console.log("✅ SMS sent. SID:", response.sid);
 
-    res.json({ success: true, sid: response.sid });
-  } catch (error) {
-    console.error("❌ Twilio SMS Error:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+//     res.json({ success: true, sid: response.sid });
+//   } catch (error) {
+//     console.error("❌ Twilio SMS Error:", error);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// });
 module.exports = router;
 
 
