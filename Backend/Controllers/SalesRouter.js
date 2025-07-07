@@ -8,10 +8,16 @@ const Sales = require("../Modules/sales");
 // const authToken = process.env.TWILIO_AUTH_TOKEN;
 // const twilioClient = twilio(accountSid, authToken)
 
+
 router.post('/saveSales', async (req, res) => {
   try {
-    const {
-      checked,
+    const salesArray = req.body;
+
+    if (!Array.isArray(salesArray)) {
+      return res.status(400).json({ message: 'Expected an array of sales.' });
+    }
+
+    const cleanedSales = salesArray.map(({ ID, Product, Status, Liters, Quantity, Price, TotalPrice, Name }) => ({
       ID,
       Product,
       Status,
@@ -20,26 +26,18 @@ router.post('/saveSales', async (req, res) => {
       Price,
       TotalPrice,
       Name,
-    } = req.body;
+    }));
 
-    const newSale = await Sales.create({
-      ID,
-      Product,
-      Status,
-      Liters,
-      Quantity,
-      Price,
-      TotalPrice,
-      Name,
-    });
+    const newSales = await Sales.insertMany(cleanedSales);
 
-    console.log('Sale created:', newSale);
-    res.status(200).json({ message: 'Sale created', newSale });
+    console.log('Sales created:', newSales);
+    res.status(200).json({ message: 'Sales created', newSales });
   } catch (error) {
-    console.error('Error creating sale:', error);
+    console.error('Error creating sales:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 
 router.get("/getSales", async (req, res) => {
   try {
