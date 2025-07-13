@@ -59,7 +59,7 @@ router.get("/getSales", async (req, res) => {
   }
 });
 
-router.post("/SalesUpdates", async (req, res) => {
+router.post("/salesUpdates", async (req, res) => {
   try {
     const {
       checked,
