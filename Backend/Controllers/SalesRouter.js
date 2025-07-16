@@ -3,10 +3,12 @@ const router = express.Router();
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const Sales = require("../Modules/sales");
-// const twilio = require('twilio');
-// const accountSid = process.env.TWILIO_SID;
-// const authToken = process.env.TWILIO_AUTH_TOKEN;
-// const twilioClient = twilio(accountSid, authToken)
+
+require('dotenv').config();
+const africastalking = require('africastalking')({
+  apiKey: process.env.AT_API_KEY,
+  username: process.env.AT_USERNAME,
+});
 
 
 router.post('/saveSales', async (req, res) => {
@@ -188,49 +190,29 @@ router.post("/sendReceipt", upload.single("file"), async (req, res) => {
     res.status(500).json({ msg: "Failed to send email" });
   }
 });
+router.post("/sendSms", async (req, res) => {
+  try {
+    const { phone, message } = req.body;
 
+    if (!phone || !message) {
+      return res.status(400).json({ msg: "Phone number and message are required" });
+    }
 
-// server.js
-// POST /send-sms
-// router.post("/send-sms", async (req, res) => {
-//   const { to, message } = req.body;
-//   console.log("to",to)
-//     console.log("mess",message)
+    const sms = africastalking.SMS;
 
-//   if (!to || !message) {
-//     return res.status(400).json({
-//       success: false,
-//       error: "Missing 'to' or 'message' in request body",
-//     });
-//   }
+    const result = await sms.send({
+      to: [phone],
+      message: message,
+    });
 
-//   const fromNumber = process.env.TWILIO_PHONE_NUMBER;
-//   if (!fromNumber) {
-//     return res.status(500).json({
-//       success: false,
-//       error: "TWILIO_PHONE_NUMBER not configured in environment",
-//     });
-//   }
+    console.log("SMS sent:", result);
+    res.status(200).json({ msg: "SMS sent successfully", result });
+  } catch (error) {
+    console.error("SMS sending error:", error);
+    res.status(500).json({ msg: "Failed to send SMS", error: error.message });
+  }
+});
 
-//   try {
-//     console.log(`📨 Sending SMS from ${fromNumber} to ${to}`);
-
-//     const formattedTo = to.startsWith("+") ? to : `+${to}`;
-
-//     const response = await twilioClient.messages.create({
-//       body: message,
-//       from: fromNumber,
-//       to: formattedTo,
-//     });
-
-//     console.log("✅ SMS sent. SID:", response.sid);
-
-//     res.json({ success: true, sid: response.sid });
-//   } catch (error) {
-//     console.error("❌ Twilio SMS Error:", error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// });
 module.exports = router;
 
 

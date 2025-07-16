@@ -22,7 +22,6 @@ const picturesRouter = require('./Controllers/PicturesRouter');
 
 
 
-
 const app = express();
 const port = 8900;
 
@@ -52,11 +51,14 @@ app.use('/api/sales', salesRouter);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    //  origin: 'https://mern-stack-app22.onrender.com',
-    origin:"http://localhost:3000",
+     origin: 'https://mern-stack-app22.onrender.com',
+    // origin:"http://localhost:3000",
     methods: ['GET', 'POST']
   }
 });
+
+
+
 
 const connectedUsers = {}; // Corrected typo from 'onst' to 'const'
 
