@@ -100,7 +100,7 @@ router.post("/salesUpdates", async (req, res) => {
       { new: true }
     );
 
-    console.log("Sale updated:", updatedSale);
+    // console.log("Sale updated:", updatedSale);
     res.status(200).json({ message: "Sale updated successfully.", sale: updatedSale });
   } catch (error) {
     console.error("Error updating sale:", error);
