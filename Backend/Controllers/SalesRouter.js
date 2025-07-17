@@ -190,6 +190,7 @@ router.post("/sendReceipt", upload.single("file"), async (req, res) => {
     res.status(500).json({ msg: "Failed to send email" });
   }
 });
+
 router.post("/sendSms", async (req, res) => {
   try {
     const { phone, message } = req.body;
@@ -203,12 +204,14 @@ router.post("/sendSms", async (req, res) => {
     const result = await sms.send({
       to: [phone],
       message: message,
+      enqueue: true,
     });
 
-    console.log("SMS sent:", result);
+    console.log("📤 SMS sent:", result);
+
     res.status(200).json({ msg: "SMS sent successfully", result });
   } catch (error) {
-    console.error("SMS sending error:", error);
+    console.error("❌ SMS sending error:", error.message);
     res.status(500).json({ msg: "Failed to send SMS", error: error.message });
   }
 });
