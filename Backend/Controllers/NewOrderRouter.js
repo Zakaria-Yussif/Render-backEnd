@@ -51,7 +51,7 @@ router.get("/getNewOrder", async (req, res) => {
     // Ensure uniqueness by _id (MongoDB’s default unique field)
     const uniqueOrders = Array.from(new Map(orders.map(order => [order._id.toString(), order])).values());
 
-    console.log("Fetched unique orders:", uniqueOrders);
+    // console.log("Fetched unique orders:", uniqueOrders);
     return res.status(200).json({ message: "Fetched unique orders", uniqueArray: uniqueOrders });
   } catch (error) {
     console.error('Error fetching new orders:', error);
@@ -96,7 +96,7 @@ router.post("/newOrderUpdates", async (req, res) => {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    console.log("Order updated:", updatedOrder);
+    // console.log("Order updated:", updatedOrder);
     res.status(200).json({ message: "Order updated successfully", data: updatedOrder });
   } catch (error) {
     console.error("Error updating order:", error);
