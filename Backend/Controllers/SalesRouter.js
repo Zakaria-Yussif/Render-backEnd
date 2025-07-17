@@ -204,17 +204,39 @@ router.post("/sendSms", async (req, res) => {
     const result = await sms.send({
       to: [phone],
       message: message,
-      enqueue: true,
     });
 
-    console.log("📤 SMS sent:", result);
+    const recipient = result.SMSMessageData.Recipients[0];
 
-    res.status(200).json({ msg: "SMS sent successfully", result });
+    if (!recipient) {
+      return res.status(500).json({ msg: "No delivery report received" });
+    }
+
+    const status = recipient.status;         // e.g. 'Success' or 'Failed'
+    const statusCode = recipient.statusCode; // e.g. 101 for success
+    const cost = recipient.cost;             // e.g. 'EUR 0.0176'
+    const number = recipient.number;         // e.g. '+3069...'
+
+    console.log(`SMS sent to ${number}`);
+    console.log(`Status: ${status} (${statusCode})`);
+    console.log(`Cost: ${cost}`);
+
+    res.status(200).json({
+      msg: "SMS attempt complete",
+      deliveryReport: {
+        number,
+        status,
+        statusCode,
+        cost,
+      },
+    });
+
   } catch (error) {
-    console.error("❌ SMS sending error:", error.message);
+    console.error("SMS sending error:", error);
     res.status(500).json({ msg: "Failed to send SMS", error: error.message });
   }
 });
+
 
 module.exports = router;
 
