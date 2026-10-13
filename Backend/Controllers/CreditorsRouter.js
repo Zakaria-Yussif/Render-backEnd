@@ -12,6 +12,9 @@ const africastalking = require('africastalking')({
 
 
 router.post('/saveCreditors', async (req, res) => {
+    console.log('network')
+    const savesBody= req.body
+    console.log('files', savesBody)
   try {
     
         
