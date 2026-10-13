@@ -16,7 +16,7 @@ router.post('/saveCreditors', async (req, res) => {
     
         
     
-    console.log('data', salesDataList)
+    
     const {
       
     CreditorID,
@@ -91,12 +91,12 @@ router.post("/CreditorsUpdates", async (req, res) => {
       return res.status(400).json({ error: "Invalid or missing _id in the request." });
     }
 
-    const existingSale = await Sales.findOne({ _id });
+    const existingSale = await Creditors.findOne({ _id });
     if (!existingSale) {
       return res.status(404).json({ error: "Sale record not found." });
     }
 
-    const updatedSale = await Sales.findOneAndUpdate(
+    const updatedSale = await Creditors.findOneAndUpdate(
       { _id },
       {
         ID,
