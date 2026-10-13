@@ -13,13 +13,11 @@ const africastalking = require('africastalking')({
 
 router.post('/saveCreditors', async (req, res) => {
   try {
-    const salesDataList = req.body;
-
-    if (!Array.isArray(salesDataList)) {
-      return res.status(400).json({ message: 'Expected an array of sales.' });
-    }
-
-    const cleanedSales = salesDataList.map(({ CreditorID, Product, Date, Balance, Quantity, Paid, TotalPrice, Name }) => ({
+    
+        
+    
+    console.log('data', salesDataList)
+    const {
       
     CreditorID,
         
@@ -30,9 +28,20 @@ router.post('/saveCreditors', async (req, res) => {
    Paid,
     TotalPrice,
     Name,
-    }));
+    }=req.body
 
-    const newCreditors = await Creditors.insertMany(cleanedSales);
+    const newCreditors = await Creditors.create({
+        
+    CreditorID,  
+    Product,
+    Date,
+    Balance,
+    Quantity,
+    Paid,
+    TotalPrice,
+    Name,
+
+    });
 
     console.log('Creditors created:', newCreditors);
     res.status(200).json({ message: 'Sales created', CreditorsCreated });
