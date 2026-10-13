@@ -19,7 +19,7 @@ router.post('/saveCreditors', async (req, res) => {
       return res.status(400).json({ message: 'Expected an array of sales.' });
     }
 
-    const cleanedSales = salesDataList.map(({ ID, Product, Date, Balance, Quantity, Paid, TotalPrice, Name }) => ({
+    const cleanedSales = salesDataList.map(({ CreditorID, Product, Date, Balance, Quantity, Paid, TotalPrice, Name }) => ({
       
     CreditorID,
         
@@ -32,10 +32,10 @@ router.post('/saveCreditors', async (req, res) => {
     Name,
     }));
 
-    const newSales = await Creditors.insertMany(cleanedSales);
+    const newCreditors = await Creditors.insertMany(cleanedSales);
 
-    console.log('Creditors created:', newSales);
-    res.status(200).json({ message: 'Sales created', newSales });
+    console.log('Creditors created:', newCreditors);
+    res.status(200).json({ message: 'Sales created', CreditorsCreated });
   } catch (error) {
     console.error('Error creating creditors:', error);
     res.status(500).json({ message: 'Internal Server Error' });
