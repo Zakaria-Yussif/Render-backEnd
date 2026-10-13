@@ -22,8 +22,8 @@ router.post('/saveSales', async (req, res) => {
     const cleanedSales = salesArray.map(({ ID, Product, Status, Liters, Quantity, Price, TotalPrice, Name }) => ({
       ID,
       Product,
-      Status,
-      Liters,
+      Paid,
+      Balance,
       Quantity,
       Price,
       TotalPrice,

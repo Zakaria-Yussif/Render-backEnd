@@ -44,6 +44,7 @@ app.use('/api/password', passwordRouter);
 app.use('/api/pictures', picturesRouter);
 app.use('/api/task', taskRouter);
 app.use('/api/sales', salesRouter);
+app.use('/api/creditors', creditorsRouter);
 
  app.use('/api/newOrder', newOrderRouter);
 
