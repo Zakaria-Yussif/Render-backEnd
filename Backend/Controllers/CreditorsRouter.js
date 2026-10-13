@@ -44,7 +44,7 @@ router.post('/saveCreditors', async (req, res) => {
     });
 
     console.log('Creditors created:', newCreditors);
-    res.status(200).json({ message: 'Sales created', CreditorsCreated });
+    res.status(200).json({ message: 'Sales created', newCreditors });
   } catch (error) {
     console.error('Error creating creditors:', error);
     res.status(500).json({ message: 'Internal Server Error' });
