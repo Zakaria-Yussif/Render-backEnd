@@ -20,27 +20,25 @@ router.post('/saveCreditors', async (req, res) => {
     const {
       
     CreditorID,
-        
-    Product,
-    Date,
-    Balance,
-    Quantity,
-   Paid,
-    TotalPrice,
     Name,
+    Balance,
+    Date,
+    Quantity,
+    Product,
+    Paid,
+    TotalPrice,
+    
     }=req.body
 
     const newCreditors = await Creditors.create({
-        
-    CreditorID,  
-    Product,
-    Date,
+    CreditorID,
+    Name,
     Balance,
+    Date,
     Quantity,
+    Product,
     Paid,
     TotalPrice,
-    Name,
-
     });
 
     console.log('Creditors created:', newCreditors);
