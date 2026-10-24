@@ -17,23 +17,14 @@ router.post('/saveCreditors', async (req, res) => {
     console.log('files', savesBody)
   try {
     
-        
-    
-    
-    const {
-      
-    CreditorID,
-    Name,
-    Balance,
-    Date,
-    Quantity,
-    Product,
-    Paid,
-    TotalPrice,
-    
-    }=req.body
+       const CreditorsArray = req.body;
 
-    const newCreditors = await Creditors.create({
+    if (!Array.isArray(CreditorsArray)) {
+      return res.status(400).json({ message: 'Expected an array of sales.' });
+    }
+
+    const cleanedSales = CreditorsArray.map(({ CreditorID, Name, Balance, Date, Quantity, Product,Paid, TotalPrice }) => ({
+       
     CreditorID,
     Name,
     Balance,
@@ -42,7 +33,28 @@ router.post('/saveCreditors', async (req, res) => {
     Product,
     Paid,
     TotalPrice,
-    });
+    
+    }));
+ 
+    
+    
+
+
+    // const data= {
+      
+    // CreditorID,
+    // Name,
+    // Balance,
+    // Date,
+    // Quantity,
+    // Product,
+    // Paid,
+    // TotalPrice,
+    
+    // }=req.body
+ console.log('ss',cleanedSales )
+    const newCreditors = await Creditors.insertMany(cleanedSales)
+    
 
     console.log('Creditors created:', newCreditors);
     res.status(200).json({ message: 'Sales created', newCreditors });
